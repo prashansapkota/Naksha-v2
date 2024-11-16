@@ -112,6 +112,34 @@ export default function BuildingRecognitionPage() {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  const getBuildingDescription = (buildingName) => {
+    switch (buildingName) {
+      case 'chapel':
+        return {
+          title: 'Fisk Memorial Chapel',
+          year: '1892',
+          description: 'Fisk Memorial Chapel, built in 1892, stands as a profound symbol of faith and community at Fisk University. This historic Victorian Gothic structure was designed by New York architect William Bigelow and serves as the spiritual center of campus life. The chapel features stunning stained glass windows, intricate woodwork, and excellent acoustics that have hosted countless performances by the renowned Fisk Jubilee Singers.',
+          
+        };
+      case 'cravath':
+        return {
+          title: 'Cravath Hall',
+          year: '1889',
+          description: "Cravath Hall, named after Fisk's first president Erastus Milo Cravath, is one of the university's most iconic buildings. Built in 1889, this Victorian Gothic structure originally served as a library and now houses administrative offices. The building is notable for its distinctive clock tower and architectural details that reflect the university's historic legacy. It stands as a testament to Fisk's commitment to academic excellence and leadership.",
+          
+        };
+      case 'jubilee':
+        return {
+          title: 'Jubilee Hall',
+          year: '1876',
+          description: 'Jubilee Hall, completed in 1876, holds the distinction of being the first permanent building for African American higher education in the United States. This historic building was funded through the remarkable tours of the original Fisk Jubilee Singers. The Victorian Gothic structure features a distinctive tower and serves as a powerful symbol of African American achievement and perseverance. Today, it continues to function as a residence hall, maintaining its historic significance while serving modern needs.',
+          
+        };
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4">
       <div className="max-w-3xl mx-auto">
@@ -224,44 +252,70 @@ export default function BuildingRecognitionPage() {
                   </div>
 
                   {prediction && (
-                    <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                      <h3 className="text-lg font-semibold text-green-800 dark:text-green-300">
-                        Building Identified:
-                      </h3>
-                      <p className="text-green-700 dark:text-green-200 text-xl mt-2">
-                        {capitalizeFirstLetter(prediction)}
-                      </p>
+                    <div className="mt-4 space-y-4">
+                      <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                        <h3 className="text-lg font-semibold text-green-800 dark:text-green-300">
+                          Building Identified:
+                        </h3>
+                        <p className="text-green-700 dark:text-green-200 text-xl mt-2">
+                          {capitalizeFirstLetter(prediction)}
+                        </p>
+                      </div>
+                      
+                      {getBuildingDescription(prediction) && (
+                        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+                          <div className="flex flex-col space-y-4">
+                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                              {getBuildingDescription(prediction).title}
+                            </h3>
+                            <div className="text-amber-600 dark:text-amber-400 font-semibold">
+                              Built in {getBuildingDescription(prediction).year}
+                            </div>
+                            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                              {getBuildingDescription(prediction).description}
+                            </p>
+                            <div className="relative h-48 w-full rounded-lg overflow-hidden mt-4">
+                              <Image
+                                src={getBuildingDescription(prediction).imageUrl}
+                                alt={getBuildingDescription(prediction).title}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
+
+                  {error && (
+                    <div className="mt-4 text-red-600 dark:text-red-400 text-sm text-center">
+                      {error}
+                    </div>
+                  )}
+
+                  <div className="mt-6 flex justify-end space-x-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowUploadSection(false)}
+                      className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 
+                        dark:hover:text-white transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={!selectedImage || isLoading}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium
+                        hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 
+                        focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed
+                        transition-colors"
+                    >
+                      {isLoading ? 'Analyzing...' : 'Analyze Image'}
+                    </button>
+                  </div>
                 </div>
               )}
-
-              {error && (
-                <div className="mt-4 text-red-600 dark:text-red-400 text-sm text-center">
-                  {error}
-                </div>
-              )}
-
-              <div className="mt-6 flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setShowUploadSection(false)}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 
-                    dark:hover:text-white transition-colors"
-                >
-                  Back
-                </button>
-                <button
-                  type="submit"
-                  disabled={!selectedImage || isLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium
-                    hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 
-                    focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed
-                    transition-colors"
-                >
-                  {isLoading ? 'Analyzing...' : 'Analyze Image'}
-                </button>
-              </div>
             </div>
           </form>
         )}
