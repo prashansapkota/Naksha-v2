@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { LoadScript, GoogleMap } from '@react-google-maps/api';
 import { useRouter } from 'next/navigation';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
@@ -15,38 +15,14 @@ const mapContainerStyle = {
   height: 'calc(100vh - 64px)'
 };
 
-// Define libraries outside of component to prevent re-renders
 const libraries = ["places"];
 
 export default function MapPage() {
   const [map, setMap] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch('/api/user/profile');
-        if (res.ok) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error('Auth check error:', error);
-        setIsAuthenticated(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
   const handleBackClick = () => {
-    if (isAuthenticated) {
-      router.push('/welcome');
-    } else {
-      router.push('/guest-dashboard');
-    }
+    router.back();
   };
 
   const onLoad = map => {

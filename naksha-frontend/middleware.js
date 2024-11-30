@@ -5,11 +5,11 @@ export function middleware(request) {
     const path = request.nextUrl.pathname;
 
     // Public paths that should be accessible without redirection
-    const publicPaths = ['/', '/login', '/signup', '/privacy', '/terms', '/contact'];
+    const publicPaths = ['/', '/login', '/signup', '/privacy', '/terms', '/contact', '/map'];
     const isPublicPath = publicPaths.includes(path);
 
     // Protected paths
-    const protectedPaths = ['/welcome', '/dashboard', '/map', '/camera'];
+    const protectedPaths = ['/welcome', '/dashboard', '/camera'];
     const isProtectedPath = protectedPaths.some(p => path.startsWith(p));
 
     // If trying to access protected routes without token, redirect to login
@@ -18,7 +18,7 @@ export function middleware(request) {
     }
 
     // If trying to access login/signup with token, redirect to welcome page
-    if (isPublicPath && token && path !== '/') {
+    if ((path === '/login' || path === '/signup') && token) {
         return NextResponse.redirect(new URL('/welcome', request.url));
     }
 
