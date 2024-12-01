@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export default function CameraCapture() {
   const videoRef = useRef(null);
@@ -64,26 +65,78 @@ export default function CameraCapture() {
     }
   };
 
+  const getBuildingDescription = (buildingName) => {
+    // Convert buildingName to lowercase for case-insensitive matching
+    const name = buildingName.toLowerCase();
+    switch (name) {
+      case 'chapel':
+        return {
+          title: 'Fisk Memorial Chapel',
+          year: '1892',
+          description: 'Fisk Memorial Chapel, built in 1892, stands as a profound symbol of faith and community at Fisk University. This historic Victorian Gothic structure was designed by New York architect William Bigelow and serves as the spiritual center of campus life. The chapel features stunning stained glass windows, intricate woodwork, and excellent acoustics that have hosted countless performances by the renowned Fisk Jubilee Singers.',
+        };
+      case 'cravath':
+        return {
+          title: 'Cravath Hall',
+          year: '1889',
+          description: "Cravath Hall, named after Fisk's first president Erastus Milo Cravath, is one of the university's most iconic buildings. Built in 1889, this Victorian Gothic structure originally served as a library and now houses administrative offices. The building is notable for its distinctive clock tower and architectural details that reflect the university's historic legacy. It stands as a testament to Fisk's commitment to academic excellence and leadership.",
+        };
+      case 'jubilee':
+        return {
+          title: 'Jubilee Hall',
+          year: '1876',
+          description: 'Jubilee Hall, completed in 1876, holds the distinction of being the first permanent building for African American higher education in the United States. This historic building was funded through the remarkable tours of the original Fisk Jubilee Singers. The Victorian Gothic structure features a distinctive tower and serves as a powerful symbol of African American achievement and perseverance. Today, it continues to function as a residence hall, maintaining its historic significance while serving modern needs.',
+        };
+      default:
+        return null;
+    }
+  };
+
   const recognizeBuilding = async (imageData) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/recognize-building', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image: imageData }),
-      });
+      // Convert base64 image to blob
+      const base64Data = imageData.split(',')[1];
+      const byteCharacters = atob(base64Data);
+      const byteArrays = [];
       
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteArrays.push(byteCharacters.charCodeAt(i));
+      }
+      
+      const byteArray = new Uint8Array(byteArrays);
+      const blob = new Blob([byteArray], { type: 'image/jpeg' });
+
+      // Create FormData and append image
+      const formData = new FormData();
+      formData.append('file', blob, 'captured-image.jpg');
+
+      console.log('Sending request to API...');
+
+      const response = await fetch('http://localhost:8000/predict', {
+        method: 'POST',
+        body: formData,
+      });
+
+      console.log('Response received:', response.status);
+
       if (!response.ok) {
-        throw new Error('Failed to recognize building');
+        const errorData = await response.text();
+        console.error('API Error:', errorData);
+        throw new Error(`Failed to analyze image: ${errorData}`);
       }
 
       const data = await response.json();
-      setRecognitionResult(data);
+      const buildingDetails = getBuildingDescription(data.predicted_class);
+      
+      setRecognitionResult({
+        buildingName: data.predicted_class,
+        confidence: data.confidence,
+        details: buildingDetails
+      });
     } catch (error) {
-      setError('Failed to recognize building. Please try again.');
-      console.error('Error recognizing building:', error);
+      console.error('Recognition error:', error);
+      setError('Failed to analyze image. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -95,6 +148,10 @@ export default function CameraCapture() {
     setRecognitionResult(null);
     setError(null);
     startCamera();
+  };
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
   return (
@@ -152,14 +209,35 @@ export default function CameraCapture() {
               <p className="mt-2">Analyzing image...</p>
             </div>
           ) : recognitionResult && (
-            <div className="p-4 bg-gray-100 rounded-lg">
-              <h2 className="text-xl font-semibold mb-2">Recognition Result:</h2>
-              <p className="font-medium">{recognitionResult.buildingName}</p>
-              <p className="mt-2 text-gray-700">{recognitionResult.description}</p>
-              {recognitionResult.confidence && (
-                <p className="mt-2 text-sm text-gray-600">
-                  Confidence: {(recognitionResult.confidence * 100).toFixed(1)}%
+            <div className="mt-4 space-y-4">
+              <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                <h3 className="text-lg font-semibold text-green-800 dark:text-green-300">
+                  Building Identified:
+                </h3>
+                <p className="text-green-700 dark:text-green-200 text-xl mt-2">
+                  {recognitionResult.details?.title || capitalizeFirstLetter(recognitionResult.buildingName)}
                 </p>
+                {recognitionResult.confidence && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    Confidence: {(recognitionResult.confidence * 100).toFixed(1)}%
+                  </p>
+                )}
+              </div>
+
+              {recognitionResult.details && (
+                <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                      Historical Information
+                    </h4>
+                    <span className="text-sm text-gray-500">
+                      Built in {recognitionResult.details.year}
+                    </span>
+                  </div>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                    {recognitionResult.details.description}
+                  </p>
+                </div>
               )}
             </div>
           )}
