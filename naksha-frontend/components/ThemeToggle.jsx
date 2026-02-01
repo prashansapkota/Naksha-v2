@@ -1,15 +1,15 @@
 'use client';
 import { useTheme } from './ThemeProvider';
 
-export const ThemeToggle = () => {
+export const ThemeToggle = ({ className = "" }) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <button
       onClick={toggleTheme}
-      className="fixed top-4 right-4 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 
+      className={`p-2 rounded-lg bg-white/80 dark:bg-gray-800/80 
         backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 
-        group z-50"
+        group ${className}`}
     >
       {theme === 'light' ? (
         <div className="relative w-6 h-6">

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useHeader } from '@/components/HeaderContext';
 import { 
   MapIcon, 
   CameraIcon,
@@ -11,16 +12,14 @@ import {
   ArrowRightIcon,
   AcademicCapIcon,
   ArrowLeftOnRectangleIcon,
-  SunIcon,
-  MoonIcon,
   QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline';
 
 export default function WelcomePage() {
   const [user, setUser] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
   const router = useRouter();
+  const { setRightContent } = useHeader();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -62,10 +61,27 @@ export default function WelcomePage() {
     }
   };
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
-  };
+  useEffect(() => {
+    setRightContent(
+      <div className="flex items-center gap-4">
+        <div className="flex items-center">
+          <UserCircleIcon className="h-8 w-8 text-gray-400" />
+          <span className="ml-2 text-gray-600 dark:text-gray-300">
+            {user?.name || 'Loading...'}
+          </span>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="flex items-center text-gray-600 hover:text-red-600 transition-colors"
+          aria-label="Log out"
+        >
+          <ArrowLeftOnRectangleIcon className="h-6 w-6" />
+        </button>
+      </div>
+    );
+
+    return () => setRightContent(null);
+  }, [handleLogout, setRightContent, user]);
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -86,44 +102,10 @@ export default function WelcomePage() {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''} bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900`}>
-      {/* Sticky Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-sm">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Naksha
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button 
-                onClick={toggleTheme}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                aria-label="Toggle theme"
-              >
-                {isDarkMode ? 
-                  <SunIcon className="h-6 w-6 text-gray-400" /> : 
-                  <MoonIcon className="h-6 w-6 text-gray-600" />
-                }
-              </button>
-              <div className="flex items-center">
-                <UserCircleIcon className="h-8 w-8 text-gray-400" />
-                <span className="ml-2 text-gray-600 dark:text-gray-300">{user?.name || 'Loading...'}</span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="flex items-center text-gray-600 hover:text-red-600 transition-colors"
-              >
-                <ArrowLeftOnRectangleIcon className="h-6 w-6" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
 
       {/* Main Content */}
-      <motion.div 
+      <motion.div
         className="max-w-7xl mx-auto px-4 py-8"
         initial="hidden"
         animate="visible"

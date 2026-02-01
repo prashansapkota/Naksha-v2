@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { LoadScript, GoogleMap, Marker, DirectionsRenderer, InfoWindow } from '@react-google-maps/api';
 import { useRouter } from 'next/navigation';
+import { useHeader } from '@/components/HeaderContext';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { MapPinIcon } from '@heroicons/react/24/solid';
 
@@ -88,6 +89,7 @@ export default function MapPage() {
   const distanceMatrixServiceRef = useRef(null);
   const placesServiceRef = useRef(null);
   const router = useRouter();
+  const { setRightContent } = useHeader();
 
   // Initialize services
   useEffect(() => {
@@ -194,18 +196,24 @@ export default function MapPage() {
     getUserLocation();
   }, [getUserLocation]);
 
-  return (
-    <div className="h-screen relative">
-      <nav className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-sm h-16 flex items-center justify-between px-4">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors"
-        >
-          <ArrowLeftIcon className="h-5 w-5 mr-2" />
-          Back
-        </button>
+  useEffect(() => {
+    setRightContent(
+      <button
+        onClick={() => router.back()}
+        className="flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors"
+      >
+        <ArrowLeftIcon className="h-5 w-5 mr-2" />
+        Back
+      </button>
+    );
 
-        <div className="flex-1 max-w-xl mx-4">
+    return () => setRightContent(null);
+  }, [router, setRightContent]);
+
+  return (
+    <div className="h-[calc(100vh-64px)] relative">
+      <div className="absolute top-4 left-1/2 z-20 w-[min(90vw,680px)] -translate-x-1/2">
+        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg shadow-sm rounded-xl px-4 py-3 flex items-center gap-3">
           <input
             type="text"
             placeholder="Search for a location..."
@@ -213,15 +221,15 @@ export default function MapPage() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
+          <button
+            onClick={getUserLocation}
+            className="flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors"
+            aria-label="Center on my location"
+          >
+            <MapPinIcon className="h-5 w-5" />
+          </button>
         </div>
-
-        <button
-          onClick={getUserLocation}
-          className="flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors"
-        >
-          <MapPinIcon className="h-5 w-5" />
-        </button>
-      </nav>
+      </div>
 
       <LoadScript
         googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}

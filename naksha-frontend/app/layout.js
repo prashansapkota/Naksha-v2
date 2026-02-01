@@ -1,5 +1,6 @@
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { HeaderProvider } from "@/components/HeaderContext";
+import AppHeader from "@/components/AppHeader";
 import "./globals.css";
 import Link from "next/link";
 import Script from 'next/script';
@@ -26,10 +27,12 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <ThemeProvider>
-          <ErrorBoundary>
-            <ThemeToggle />
-            {children}
-          </ErrorBoundary>
+          <HeaderProvider>
+            <ErrorBoundary>
+              <AppHeader />
+              {children}
+            </ErrorBoundary>
+          </HeaderProvider>
         </ThemeProvider>
       </body>
     </html>
