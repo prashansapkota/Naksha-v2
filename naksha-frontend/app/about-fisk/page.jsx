@@ -2,10 +2,24 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export default function AboutFiskPage() {
+  const router = useRouter();
+
+  const handleBackToDashboard = async () => {
+    try {
+      const res = await fetch('/api/user/profile');
+      if (res.ok) {
+        router.push('/welcome');
+        return;
+      }
+    } catch {
+      // Fall back to guest dashboard.
+    }
+    router.push('/guest-dashboard');
+  };
   const buildings = [
     {
       name: "Jubilee Hall",
@@ -41,13 +55,14 @@ export default function AboutFiskPage() {
       {/* Header */}
       <div className="bg-gradient-to-r from-amber-600 to-red-600 text-white">
         <div className="max-w-7xl mx-auto px-4 py-16">
-          <Link 
-            href="/welcome"
+          <button
+            type="button"
+            onClick={handleBackToDashboard}
             className="inline-flex items-center text-white hover:text-amber-200 mb-8 transition-colors"
           >
             <ArrowLeftIcon className="h-5 w-5 mr-2" />
             Back to Dashboard
-          </Link>
+          </button>
           <h1 className="text-5xl font-bold mb-4">About Fisk University</h1>
           <p className="text-xl text-amber-100">
             A beacon of excellence in education since 1866

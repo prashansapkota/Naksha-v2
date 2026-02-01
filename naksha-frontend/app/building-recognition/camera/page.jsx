@@ -155,103 +155,107 @@ export default function CameraCapture() {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">Building Recognition Camera</h1>
+    <div className="min-h-[calc(100vh-64px)] bg-gradient-to-b from-gray-50 to-white dark:from-slate-900 dark:to-slate-950">
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          Building Recognition Camera
+        </h1>
       
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
+        {error && (
+          <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
 
-      {!captured ? (
-        <div className="space-y-4">
-          <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className="w-full h-full object-cover"
-            />
-          </div>
-          
-          <div className="flex justify-center gap-4">
-            {!stream ? (
-              <button
-                onClick={startCamera}
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                Start Camera
-              </button>
-            ) : (
-              <button
-                onClick={captureImage}
-                className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-              >
-                Capture Photo
-              </button>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden">
-            <img
-              src={imageData}
-              alt="Captured"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          
-          {isLoading ? (
-            <div className="text-center py-4">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
-              <p className="mt-2">Analyzing image...</p>
+        {!captured ? (
+          <div className="space-y-5">
+            <div className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/10 dark:ring-white/5">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className="w-full h-full object-cover"
+              />
             </div>
-          ) : recognitionResult && (
-            <div className="mt-4 space-y-4">
-              <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                <h3 className="text-lg font-semibold text-green-800 dark:text-green-300">
-                  Building Identified:
-                </h3>
-                <p className="text-green-700 dark:text-green-200 text-xl mt-2">
-                  {recognitionResult.details?.title || capitalizeFirstLetter(recognitionResult.buildingName)}
-                </p>
-                {recognitionResult.confidence && (
-                  <p className="mt-2 text-sm text-gray-600">
-                    Confidence: {(recognitionResult.confidence * 100).toFixed(1)}%
-                  </p>
-                )}
-              </div>
-
-              {recognitionResult.details && (
-                <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                      Historical Information
-                    </h4>
-                    <span className="text-sm text-gray-500">
-                      Built in {recognitionResult.details.year}
-                    </span>
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                    {recognitionResult.details.description}
-                  </p>
-                </div>
+            
+            <div className="flex justify-center gap-4">
+              {!stream ? (
+                <button
+                  onClick={startCamera}
+                  className="px-6 py-2.5 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20"
+                >
+                  Start Camera
+                </button>
+              ) : (
+                <button
+                  onClick={captureImage}
+                  className="px-6 py-2.5 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20"
+                >
+                  Capture Photo
+                </button>
               )}
             </div>
-          )}
-          
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={retake}
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              Take Another Photo
-            </button>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="space-y-5">
+            <div className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/10 dark:ring-white/5">
+              <img
+                src={imageData}
+                alt="Captured"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {isLoading ? (
+              <div className="text-center py-4 text-gray-800 dark:text-gray-200">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
+                <p className="mt-2">Analyzing image...</p>
+              </div>
+            ) : recognitionResult && (
+              <div className="mt-4 space-y-4">
+                <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                  <h3 className="text-lg font-semibold text-green-800 dark:text-green-300">
+                    Building Identified:
+                  </h3>
+                  <p className="text-green-700 dark:text-green-200 text-xl mt-2">
+                    {recognitionResult.details?.title || capitalizeFirstLetter(recognitionResult.buildingName)}
+                  </p>
+                  {recognitionResult.confidence && (
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                      Confidence: {(recognitionResult.confidence * 100).toFixed(1)}%
+                    </p>
+                  )}
+                </div>
+
+                {recognitionResult.details && (
+                  <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                        Historical Information
+                      </h4>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        Built in {recognitionResult.details.year}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                      {recognitionResult.details.description}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={retake}
+                className="px-6 py-2.5 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20"
+              >
+                Take Another Photo
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
-} 
+}
