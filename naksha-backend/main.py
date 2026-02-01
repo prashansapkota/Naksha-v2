@@ -30,6 +30,10 @@ MODEL_PATH = os.path.join(
 
 model = YOLO(MODEL_PATH)
 
+@app.get("/healthz")
+def health_check():
+    return {"status": "ok"}
+
 @app.post("/predict")
 async def predict_image(file: UploadFile = File(...)):
     contents = await file.read()
@@ -47,4 +51,3 @@ async def predict_image(file: UploadFile = File(...)):
             names_dict[i]: prob for i, prob in enumerate(probs)
         }
     }
-
