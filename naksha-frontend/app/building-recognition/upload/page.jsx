@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { CloudArrowUpIcon, XMarkIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export default function UploadPage() {
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,7 +77,7 @@ export default function UploadPage() {
 
       console.log('Sending request to API...');
 
-      const response = await fetch('http://localhost:8000/predict', {
+      const response = await fetch(`${API_BASE}/predict`, {
         method: 'POST',
         body: formData,
       });

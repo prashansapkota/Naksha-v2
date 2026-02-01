@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function CameraPage() {
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
@@ -52,18 +53,29 @@ export default function CameraPage() {
       // Convert canvas to blob
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
       const formData = new FormData();
-      formData.append('image', blob);
+      formData.append('file', blob, 'capture.jpg');
 
-      // Send to analysis endpoint
-      const response = await fetch('/api/analyze-image', {
+      // Send to backend
+      const response = await fetch(`${API_BASE}/predict`, {
         method: 'POST',
         body: formData
       });
 
       if (response.ok) {
         const result = await response.json();
+        const predictedClass = result.predicted_class;
+        const confidence = result.probabilities?.[predictedClass];
+        const normalized = {
+          predictions: [
+            {
+              building: predictedClass,
+              confidence: typeof confidence === 'number' ? confidence : 0
+            }
+          ],
+          raw: result
+        };
         // Store result in localStorage for the details page
-        localStorage.setItem('buildingAnalysis', JSON.stringify(result));
+        localStorage.setItem('buildingAnalysis', JSON.stringify(normalized));
         router.push('/building-details');
       }
     } catch (error) {

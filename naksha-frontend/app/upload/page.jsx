@@ -6,6 +6,7 @@ import { CloudArrowUpIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 
 export default function UploadPage() {
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,9 +46,9 @@ export default function UploadPage() {
 
     try {
       const formData = new FormData();
-      formData.append('image', selectedImage);
+      formData.append('file', selectedImage);
 
-      const response = await fetch('/api/analyze-building', {
+      const response = await fetch(`${API_BASE}/predict`, {
         method: 'POST',
         body: formData,
       });
@@ -57,8 +58,19 @@ export default function UploadPage() {
       }
 
       const data = await response.json();
-      // Store the analysis result ID in the URL for the results page
-      router.push(`/building-details?id=${data.resultId}`);
+      const predictedClass = data.predicted_class;
+      const confidence = data.probabilities?.[predictedClass];
+      const normalized = {
+        predictions: [
+          {
+            building: predictedClass,
+            confidence: typeof confidence === 'number' ? confidence : 0
+          }
+        ],
+        raw: data
+      };
+      localStorage.setItem('buildingAnalysis', JSON.stringify(normalized));
+      router.push('/building-details');
     } catch (error) {
       console.error('Upload error:', error);
       setError('Failed to analyze image. Please try again.');

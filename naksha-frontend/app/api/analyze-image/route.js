@@ -5,6 +5,11 @@ import { getServerSession } from "next-auth/next";
 
 export async function POST(req) {
   try {
+    const apiBase =
+      process.env.NEXT_PUBLIC_API_BASE_URL ||
+      process.env.API_BASE_URL ||
+      'http://localhost:8000';
+
     // Get user session
     const session = await getServerSession();
     if (!session) {
@@ -15,7 +20,7 @@ export async function POST(req) {
     }
 
     const formData = await req.formData();
-    const image = formData.get('image');
+    const image = formData.get('file');
 
     if (!image) {
       return NextResponse.json(
@@ -28,7 +33,7 @@ export async function POST(req) {
     const pythonFormData = new FormData();
     pythonFormData.append('file', image);
 
-    const response = await fetch('http://localhost:8000/analyze', {
+    const response = await fetch(`${apiBase}/predict`, {
       method: 'POST',
       body: pythonFormData,
     });
@@ -39,19 +44,30 @@ export async function POST(req) {
 
     const result = await response.json();
 
+    const predictedClass = result.predicted_class;
+    const confidence = result.probabilities?.[predictedClass];
+    const predictions = [
+      {
+        building: predictedClass,
+        confidence: typeof confidence === 'number' ? confidence : 0
+      }
+    ];
+
     // Store result in MongoDB
     await connectMongoDB();
     
     const analysisResult = await AnalysisResult.create({
       userId: session.user.id,
-      predictions: result.predictions,
-      navigation: result.navigation,
+      predictions,
+      navigation: null,
       // You might want to store the image path if you're saving images
       imagePath: `uploads/${image.name}` 
     });
 
     return NextResponse.json({
-      ...result,
+      predictions,
+      navigation: null,
+      raw: result,
       resultId: analysisResult._id
     });
 

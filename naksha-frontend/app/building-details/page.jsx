@@ -38,14 +38,22 @@ export default function BuildingDetailsPage() {
 
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-4">
-            {buildingData.predictions[0]?.building}
+            {buildingData.predictions?.[0]?.building || buildingData.predicted_class}
           </h1>
 
           <div className="space-y-4">
             <div className="bg-blue-50 p-4 rounded-lg">
               <h2 className="font-semibold text-blue-800 mb-2">Building Information</h2>
               <p className="text-gray-700">
-                Confidence: {(buildingData.predictions[0]?.confidence * 100).toFixed(2)}%
+                Confidence: {(() => {
+                  const confidence =
+                    buildingData.predictions?.[0]?.confidence ??
+                    buildingData.probabilities?.[buildingData.predicted_class];
+                  if (typeof confidence === 'number') {
+                    return `${(confidence * 100).toFixed(2)}%`;
+                  }
+                  return 'N/A';
+                })()}
               </p>
             </div>
 

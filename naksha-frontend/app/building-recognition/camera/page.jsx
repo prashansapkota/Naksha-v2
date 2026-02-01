@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export default function CameraCapture() {
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
   const videoRef = useRef(null);
   const [stream, setStream] = useState(null);
   const [captured, setCaptured] = useState(false);
@@ -113,7 +114,7 @@ export default function CameraCapture() {
 
       console.log('Sending request to API...');
 
-      const response = await fetch('http://localhost:8000/predict', {
+      const response = await fetch(`${API_BASE}/predict`, {
         method: 'POST',
         body: formData,
       });
