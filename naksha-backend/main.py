@@ -11,7 +11,10 @@ app = FastAPI()
 # Allow all origins for now (frontend + Render domain)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://naksha-v2.vercel.app",
+        "https://naksha-v2-hcp3079fo-prashansapkotas-projects.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
