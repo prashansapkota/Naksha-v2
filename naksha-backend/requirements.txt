@@ -1,6 +1,6 @@
 fastapi
-python-multipart
 uvicorn
-pillow
 ultralytics
+pillow
 numpy
+python-multipart
