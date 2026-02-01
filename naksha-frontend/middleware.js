@@ -4,6 +4,18 @@ export function middleware(request) {
     const token = request.cookies.get("token")?.value;
     const path = request.nextUrl.pathname;
 
+    // Skip static assets and manifest/icons
+    if (
+        path.startsWith('/_next') ||
+        path.startsWith('/icons') ||
+        path === '/manifest.json' ||
+        path === '/favicon.ico' ||
+        path === '/robots.txt' ||
+        path === '/sitemap.xml'
+    ) {
+        return NextResponse.next();
+    }
+
     // Public paths that should be accessible without redirection
     const publicPaths = ['/', '/login', '/signup', '/privacy', '/terms', '/contact', '/map'];
     const isPublicPath = publicPaths.includes(path);
@@ -34,6 +46,8 @@ export const config = {
         '/dashboard/:path*',
         '/map/:path*',
         '/camera/:path*',
-        '/api/user/:path*'
+        '/api/user/:path*',
+        '/manifest.json',
+        '/icons/:path*'
     ]
 }; 
