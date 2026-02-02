@@ -1,6 +1,14 @@
 # Naksha - AI Campus Navigation Tool
 
-**Naksha** is an AI-powered campus navigation tool designed to assist students, faculty, and visitors in navigating Fisk University’s campus. The application provides real-time building recognition, route optimization, and highlights key points of interest, using advanced technologies like augmented reality (AR), machine learning, and Google Maps integration.
+**Naksha** is an AI-powered campus navigation tool designed to assist students, faculty, and visitors in navigating Fisk University’s campus. The application provides real-time building recognition, route optimization, and highlights key points of interest, using advanced technologies like machine learning, and Google Maps integration.
+
+<img width="452" height="280" alt="image" src="https://github.com/user-attachments/assets/066ac2c8-a453-4e66-bd4e-05a30a122311" />
+
+<img width="452" height="282" alt="image" src="https://github.com/user-attachments/assets/dd2e3780-36ce-415b-bdf6-617311501d98" />
+
+
+
+
 
 ## Features
 
