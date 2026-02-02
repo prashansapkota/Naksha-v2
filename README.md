@@ -2,12 +2,25 @@
 
 **Naksha** is an AI-powered campus navigation tool designed to assist students, faculty, and visitors in navigating Fisk University’s campus. The application provides real-time building recognition, route optimization, and highlights key points of interest, using advanced technologies like machine learning, and Google Maps integration.
 
-<img width="420" height="280" alt="image" src="https://github.com/user-attachments/assets/066ac2c8-a453-4e66-bd4e-05a30a122311" />
-<img width="420" height="280" alt="Image 2-1-26 at 7 43 pm" src="https://github.com/user-attachments/assets/6a7d9e23-93c3-4b68-9d15-8db16881237c" />
-
-<img width="420" height="282" alt="image" src="https://github.com/user-attachments/assets/6a7c42ed-ee26-4a15-8d9c-4993613caab1" />
-
-<img width="420" height="282" alt="image" src="https://github.com/user-attachments/assets/dd2e3780-36ce-415b-bdf6-617311501d98" />
+## Preview
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/066ac2c8-a453-4e66-bd4e-05a30a122311" width="500"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/6a7d9e23-93c3-4b68-9d15-8db16881237c" width="500"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/6a7c42ed-ee26-4a15-8d9c-4993613caab1" width="500"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/dd2e3780-36ce-415b-bdf6-617311501d98" width="500"/>
+    </td>
+  </tr>
+</table>
 
 ## Demonstration
 Demo: https://youtu.be/nBK1vJNwf9M
