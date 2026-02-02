@@ -27,7 +27,7 @@ MODEL_PATH = os.path.join(
     "weights",
     "last.pt"
 )
-
+# Load the model
 model = YOLO(MODEL_PATH)
 
 @app.get("/healthz")
